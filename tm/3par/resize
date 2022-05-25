@@ -102,18 +102,21 @@ if [ "$PERSISTENT" != "YES" ]; then
   # get VM disk WWN
   NAME_WWN=$(${DRIVER_PATH}/../../datastore/3par/3par.py getVmClone -a $API_ENDPOINT -i $IP -s $SECURE -u $USERNAME \
                                                                 -p $PASSWORD -nt $NAMING_TYPE -vi $VMID -id $DISK_ID)
+
+  NAME=$(get_vv_name "$NAME_WWN")
   
 else
   NAME_WWN=$(${DRIVER_PATH}/../../datastore/3par/3par.py getVmClone -a $API_ENDPOINT -i $IP -s $SECURE -u $USERNAME \
                                                                 -p $PASSWORD -nt $NAMING_TYPE -vi $IMAGE_ID -id $DISK_ID)
 
+  NAME="one.$NAMING_TYPE.$IMAGE_ID.vv"
+  
   if [ $? -ne 0 ]; then
     error_message "$NAME_WWN"
     exit 1
   fi
 fi
 
-NAME=$(get_vv_name "$NAME_WWN")
 WWN=$(get_vv_wwn "$NAME_WWN")
 
 CURRENT_SIZE=$(${DRIVER_PATH}/../../datastore/3par/3par.py getVVSize -a $API_ENDPOINT -i $IP -s $SECURE -u $USERNAME \
